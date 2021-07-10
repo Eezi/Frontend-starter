@@ -7,16 +7,26 @@ class Block {
     this.data = data;
     this.previousHash = previousHash
     this.hash = this.caclulateHash()
+    this.nonce = 0;
   }
 
   caclulateHash() {
-    return SHA256(this.index + this.previousHash + this.timeStamp + JSON.stringify(this.data)).toString();
+    return SHA256(this.index + this.previousHash + this.timeStamp + JSON.stringify(this.data) + this.nonce).toString();
+  }
+
+  mainBlock(difficulty) {
+    while(this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")) {
+      this.nonce++;
+      this.hash = this.caclulateHash();
+    }
+    console.log("Block mained: ", this.hash)
   }
 }
 
 class BlockChain {
   constructor() {
     this.chain = [this.createGenesisBlock()]
+    this.difficulty = 4;
   }
 
   createGenesisBlock() {
@@ -29,7 +39,7 @@ class BlockChain {
 
   addBlock(newBlock) {
     newBlock.previousHash = this.getLatestBlock().hash;
-    newBlock.hash = newBlock.caclulateHash();
+    newBlock.mainBlock(this.difficulty)
     this.chain.push(newBlock);
   }
 
@@ -52,7 +62,9 @@ class BlockChain {
 }
 
 let tomiCoin = new BlockChain();
+console.log('Maining block 1...')
 tomiCoin.addBlock(new Block(1, "6.7.2021", { amount: 4 } ));
+console.log('Maining block 2...')
 tomiCoin.addBlock(new Block(2, new Date(), { amount: 10 } ));
 
 console.log(JSON.stringify(tomiCoin, null, 4));
