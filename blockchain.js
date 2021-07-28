@@ -1,11 +1,40 @@
+const SHA256 = require("crypto-js/sha256");
+const EC = require('elliptic').ec;
 
-import sha256 from 'crypto-js/sha256.js';
+const ec = new EC('secp256k1');
 
 class Transaction {
   constructor(fromAddress, toAddress, amount) {
+    // fromAddress is a public key
     this.fromAddress = fromAddress;
     this.toAddress = toAddress;
     this.amount = amount;
+  }
+
+  calculateHash() {
+    return SHA256(this.fromAddress, this.toAddress, this.amount).toString();
+  }
+
+  signTranactions(signingKey){
+    if (signingKey.getPublic('hex') !== this.fromAddress) {
+      throw new Error('You cannot sign transactions for other wallets!');
+    }
+
+    const hashTx = this.caclulateHash();
+    const sig = signingKey.sign(hashTx, 'base64');
+    this.signature = sig.toDER('hex');
+  }
+
+  isValid() {
+    if (this.fromAddress === null) return true;
+
+    if (!this.signature || this.signature.length === 0) {
+      throw new Error('No signature in this transaction');
+    }
+    
+    const publicKey = ec.keyFromPublic(this.fromAddress, 'hex');
+    return publicKey.verify(this.caclulateHash(), this.signature);
+
   }
 }
 
@@ -19,7 +48,7 @@ class Block {
   }
 
   caclulateHash() {
-    return sha256(this.previousHash + this.timeStamp + JSON.stringify(this.data) + this.nonce).toString();
+    return SHA256(this.previousHash + this.timeStamp + JSON.stringify(this.data) + this.nonce).toString();
   }
 
   mainBlock(difficulty) {
@@ -28,6 +57,15 @@ class Block {
       this.hash = this.caclulateHash();
     }
     console.log("Block mained: ", this.hash)
+  }
+
+  hasValidTransactions() {
+    for (const tx of this.transactions) {
+      if (!tx.isValid()) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 
@@ -59,7 +97,15 @@ class BlockChain {
     ]
   }
 
-  createTransaction(transaction) {
+  addTransaction(transaction) {
+    if (!transaction.fromAddress || !transaction.toAddress) {
+      throw new Error('Transaction must include from and to address');
+    }
+
+    if (!transaction.isValid()){
+      throw new Error('Cannot add invalid transaction to the chain');
+    }
+
     this.pendingTransactions.push(transaction);
   }
 
@@ -86,6 +132,10 @@ class BlockChain {
       const currentBlock = this.chain[i];
       const previousBlock = this.chain[i - 1];
 
+      if (!currentBlock.hasValidTransactions()) {
+        return false;
+      }
+
       if (currentBlock.hash !== currentBlock.caclulateHash()) {
         return false;
       }
@@ -99,4 +149,5 @@ class BlockChain {
   }
 }
 
-export { BlockChain, Transaction }
+module.exports.BlockChain = BlockChain; 
+module.exports.Transaction = Transaction; 
