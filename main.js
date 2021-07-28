@@ -19,6 +19,8 @@ console.log('Blance of xavire is ', tomiCoin.getBalanceOfAddress('xaviers-addres
 console.log('Starting the miner again...');
 tomiCoin.miningPendingTransactions(myWalletAddress);
 
+tomiCoin.chain[1].transactions[0].amount = 1;
+
 console.log('Blance of xavire is ', tomiCoin.getBalanceOfAddress(myWalletAddress));
 console.log('Is chain valid?', tomiCoin.isChainValid());
 
