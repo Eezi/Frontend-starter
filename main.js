@@ -7,21 +7,13 @@ const myWalletAddress = myKey.getPublic('hex')
 
 let tomiCoin = new BlockChain();
 
-const tx1 = new Transaction(myWalletAddress, 'public ket goes here', 10);
-tx1.signTransaction(tx1);
+const tx1 = new Transaction(myWalletAddress, 'public ket goes here', 150);
+tx1.signTransactions(myKey);
 tomiCoin.addTransaction(tx1);
 
 console.log('Starting the miner...');
-tomiCoin.miningPendingTransactions('xaviers-address');
-
-console.log('Blance of xavire is ', tomiCoin.getBalanceOfAddress('xaviers-address'))
-
-console.log('Starting the miner again...');
 tomiCoin.miningPendingTransactions(myWalletAddress);
 
-tomiCoin.chain[1].transactions[0].amount = 1;
-
-console.log('Blance of xavire is ', tomiCoin.getBalanceOfAddress(myWalletAddress));
-console.log('Is chain valid?', tomiCoin.isChainValid());
+console.log('Blance of tomi is ', tomiCoin.getBalanceOfAddress(myWalletAddress));
 
 

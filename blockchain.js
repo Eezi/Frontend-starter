@@ -15,12 +15,12 @@ class Transaction {
     return SHA256(this.fromAddress, this.toAddress, this.amount).toString();
   }
 
-  signTranactions(signingKey){
+  signTransactions(signingKey){
     if (signingKey.getPublic('hex') !== this.fromAddress) {
       throw new Error('You cannot sign transactions for other wallets!');
     }
 
-    const hashTx = this.caclulateHash();
+    const hashTx = this.calculateHash();
     const sig = signingKey.sign(hashTx, 'base64');
     this.signature = sig.toDER('hex');
   }
@@ -33,7 +33,7 @@ class Transaction {
     }
     
     const publicKey = ec.keyFromPublic(this.fromAddress, 'hex');
-    return publicKey.verify(this.caclulateHash(), this.signature);
+    return publicKey.verify(this.calculateHash(), this.signature);
 
   }
 }
