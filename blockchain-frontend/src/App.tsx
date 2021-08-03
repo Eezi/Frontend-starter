@@ -10,7 +10,7 @@ const App: FC = (): ReactElement => {
   return (
     <Router>
       <Header />
-      <div className="px-14 py-8">
+      <div className="px-14 py-8 font-mono">
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/pending" component={Home} />
