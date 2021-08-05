@@ -12,6 +12,7 @@
     "watch:css": "postcss src/styles/tailwind.css -o src/styles/output.css"
   },
   "dependencies": {
+    "blockchain": "github:Eezi/Simple-BlockChain",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-router": "^5.2.0",
