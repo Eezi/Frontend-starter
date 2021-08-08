@@ -8,7 +8,7 @@ interface Keys {
 }
 
 export class BlockchainService {
-   blockchainInstance = new BlockChain();
+   public blockchainInstance = new BlockChain();
    public walletKeys: Array<Keys> = [];
 
     constructor () {
@@ -20,7 +20,8 @@ export class BlockchainService {
     }
 
     public getBlocks() {
-        return new BlockChain().chain;
+        console.log('blockchian', this.blockchainInstance)
+        return this.blockchainInstance.chain;
     }
 
     private generateWalletKeys() {
@@ -37,3 +38,6 @@ export class BlockchainService {
 
 }
 
+export const testi = () => {
+    console.log('asdasd')
+}

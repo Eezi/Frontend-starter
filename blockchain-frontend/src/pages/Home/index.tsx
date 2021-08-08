@@ -1,15 +1,22 @@
-import React, { FC, ReactElement } from 'react'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
 import BlockCard from '../../components/BlockCard/index';
+import TransactionsOfBlock from '../../components/transactions';
 import InfoText from './InfoText';
 import { BlockchainService } from '../../modules/blockchain';
 
 const Home: FC<{}> = (): ReactElement => {
-    const blocks = [];
-    console.log(BlockchainService.prototype.getBlocks())
+  const [blockchain, setBlockchain] = useState([])
+
+  useEffect(() => {
+    setBlockchain(BlockchainService.prototype.getBlocks());
+  }, [])
     return (
         <div>
             <InfoText />
-            <BlockCard />
+            {blockchain.map((block) => (
+                <BlockCard block={block} />
+            ))}
+            <TransactionsOfBlock />
         </div>
     );
 }
